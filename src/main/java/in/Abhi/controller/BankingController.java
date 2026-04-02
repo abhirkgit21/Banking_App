@@ -2,17 +2,18 @@ package in.Abhi.controller;
 
 import in.Abhi.entity.Account;
 import in.Abhi.service.BankingService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/bank")
 @RestController
 public class BankingController {
 
-    @Autowired
-    private BankingService service;
+    private final BankingService service;
+
+    // ✅ Constructor Injection
+    public BankingController(BankingService service) {
+        this.service = service;
+    }
 
     @PostMapping("/create")
     public Account create(@RequestBody Account acc) {
@@ -27,5 +28,16 @@ public class BankingController {
     @PostMapping("/withdraw")
     public Account withdraw(@RequestParam Long id, @RequestParam double amount) {
         return service.withdraw(id, amount);
+    }
+
+    @GetMapping("/{id}")
+    public Account findById(@PathVariable Long id) {
+        return service.getAccountById(id); // ✅ correct
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteAccount(@PathVariable Long id) {
+        service.deleteAccount(id);
+        return "Account deleted successfully with id: " + id;
     }
 }
